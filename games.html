@@ -32,6 +32,14 @@
   });
 </script>
 <body>
+    <script>
+      var redirectValue = 0; // 0 = no redirect, 1 = redirect to maintain.html
+    
+      if (redirectValue === 1) {
+        // Redirect to maintain.html
+        window.location.href = 'maintain.html';
+      }
+    </script>
   <div id="commit-banner">
   <button id="commit-banner-toggle" aria-label="Toggle commit banner">▼</button>
   <span class="scrolling-text"></span>
@@ -135,60 +143,17 @@
   </noscript>
   <div class="topnav">
     <a href="index.html">Home</a>
-    <a href="games.html">Games</a>
+    <a href="games.html" class="active">Games</a>
     <a href="news.html">News</a>
     <a href="opensource.html">Source Code</a>
     <a href="credits.html">Credits</a>
     <a href="changelog.html">Changelog</a>
     <a href="archive.html">Archive</a>
-    <a href="submitad.html">Submit Ad!</a>
-    <a
-      href="https://docs.google.com/document/d/e/2PACX-1vT-28hqhqnzJb3ABu47A7wYL6ei8MIE7DD7yGq1VrR6D7HSfrHjZlGfsneivTIdLFp16dcWPDhZhjx7/pub">Documentation</a>
-  </div>
-
   <div class="container">
     <h1>Games Collection</h1>
     <p>Browse our extensive collection of free browser games. Click on any game to start playing instantly!</p>
 
-   <!-- Ad Roster Display -->
-<div id="ad-roster" style="margin: 2em auto; max-width: 480px; text-align: center;"></div>
-<p>This is an ad. Ads here are managed by us at Ijichi Systems.</p>
-<script>
-// List of ads (add more as needed)
-const ads = [
-  {
-    title: "Your Ad Here!",
-    image: "ads/adhere.webp",
-    link: "submitad.html"
-  },
-  {
-    title: "View the source code!",
-    image: "ads/htmlad.png",
-    link: "https://github.com/Ijichi-Systems/space-cat-games"
-  },
-  // Example: Add more ads below
-  // {
-  //   title: "Cool Game!",
-  //   image: "ads/coolgame.png",
-  //   link: "https://example.com"
-  // }
-];
 
-// Function to display a random ad
-function showRandomAd() {
-  const ad = ads[Math.floor(Math.random() * ads.length)];
-  document.getElementById('ad-roster').innerHTML = `
-    <a href="${ad.link}" target="_blank" style="text-decoration:none;color:inherit;">
-      <img src="${ad.image}" alt="${ad.title}" style="max-width:160px;max-height:80px;border-radius:8px;box-shadow:0 2px 8px #000a;">
-      <div style="margin-top:0.5em;font-weight:bold;font-size:1em;">${ad.title}</div>
-    </a>
-  `;
-}
-
-// Show a new ad every 10 seconds
-showRandomAd();
-setInterval(showRandomAd, 10000);
-</script>
 
 
 
@@ -338,7 +303,7 @@ setInterval(showRandomAd, 10000);
         </div>
   
         <div class="game-item">
-          <button type="button" onclick="wfindow.location.href='games/snake.html'" title="Snake Game">
+          <button type="button" onclick="window.location.href='games/snake.html'" title="Snake Game">
             <img src="https://i.ibb.co/PGMhS950/images-3.jpg" alt="Snake Game">
           </button>
           <p>Snake Game</p>
@@ -426,7 +391,6 @@ setInterval(showRandomAd, 10000);
         <p>Papa's Freezeria</p>
       </div>
 
-      </div>
       </div>
       
       
@@ -675,13 +639,12 @@ setInterval(showRandomAd, 10000);
 
       <div class="game-item">
         <button type="button" onclick="window.location.href='/games/gamble1928.html'" title="gamble1928">
-          <img src="/images/1928cap.png"
-            alt="gamble1928">
+          <img src="/images/1928cap.png" alt="gamble1928">
         </button>
         <p>gamble1928</p>
         </div>
 
-        
+
 
         <div class="game-item">
           <button type="button" onclick="window.location.href='/games/bbfactory.html'" title="Bauble Factory">
@@ -697,11 +660,11 @@ setInterval(showRandomAd, 10000);
           <p>Chicken Game 2</p>
         </div>
 
-        
+
+
 
       <div class="game-item">
-        <button type="button" onclick="window.location.href='https://glueification.netlify.app/'"
-          title="Glueification!">
+        <button type="button" onclick="window.location.href='https://glueification.netlify.app/'" title="Glueification!">
           <img src="/icon/icon.png" alt="Glueification">
         </button>
         <p>Glueification!</p>
@@ -726,26 +689,21 @@ setInterval(showRandomAd, 10000);
           </button>
           <p>Bad Apple</p>
         </div>
-        
+
       </div>
 
-     
-      
 
 
-      
 
 
-     
+
+
+
+
       </div>
       </div>
       </div>
-      
-
-
-    </div>
-    </div>
-  
+      </div>
 
   <footer>
     <div class="container">
@@ -762,7 +720,6 @@ setInterval(showRandomAd, 10000);
         <p class="copyright">© 2025 Nijika Softworks. All rights reserved.</p>
     </div>
   </footer>
-
 
   <!-- FPS Counter -->
 <div id="fps-counter" style="

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Space Cat Games - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
@@ -44,6 +45,14 @@
 
   </head>
   <body class="dark-theme">
+        <script>
+      var redirectValue = 0; // 0 = no redirect, 1 = redirect to maintain.html
+    
+      if (redirectValue === 1) {
+        // Redirect to maintain.html
+        window.location.href = 'maintain.html';
+      }
+    </script>
     <div id="commit-banner">
       <button id="commit-banner-toggle" aria-label="Toggle commit banner">
         ▼
@@ -161,18 +170,13 @@
       <a href="opensource.html">Source Code</a>
       <a href="credits.html">Credits</a>
       <a href="changelog.html">Changelog</a>
-      <a
-        href="https://docs.google.com/document/d/e/2PACX-1vT-28hqhqnzJb3ABu47A7wYL6ei8MIE7DD7yGq1VrR6D7HSfrHjZlGfsneivTIdLFp16dcWPDhZhjx7/pub"
-        >Documentation</a
-      >
       <a href="archive.html">Archive</a>
-      <a href="submitad.html">Submit Ad!</a>
     </div>
     
 
     <div class="hero">
       <div class="container">
-        <h1 id="main-header">Welcome to Space Cat Games 15</h1>
+        <h1 id="main-header">Welcome to Space Cat Games 16 - Codename Aero</h1>
         <div id="random-tip" class="random-tip"></div>
         <script>
           // Random tips array
@@ -243,10 +247,10 @@
           function randomizeHeader() {
             const header = document.getElementById("main-header");
             if (Math.random() < 0.1) {
-              header.textContent = "スペースキャットゲーム バージョン15";
+              header.textContent = "スペースキャットゲーム バージョン16 - コードネームエアロへようこそ";
               console.log("Japanese header loaded.");
             } else {
-              header.textContent = "Welcome to Space Cat Games 15";
+              header.textContent = "Welcome to Space Cat Games 16 - Codename Aero";
               console.log("Standard header loaded.");
             }
           }

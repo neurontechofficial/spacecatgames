@@ -37,9 +37,9 @@
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #e0f6ff 0%, #b3e5fc 100%);
   color: #333;
 }
 
@@ -83,13 +83,13 @@ p {
 }
 
 a {
-  color: #3498db;
+  color: #87ceeb;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #2980b9;
+  color: #5f9ea0;
   text-decoration: underline;
 }
 
@@ -101,17 +101,19 @@ h6 {
 .topnav {
   display: flex;
   justify-content: center;
-  background-color: #2c3e50;
+  background-color: rgba(255, 255, 255, 0.1);
   overflow: hidden;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .topnav a {
   display: block;
-  color: white;
+  color: #333;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -120,27 +122,28 @@ h6 {
 }
 
 .topnav a:hover {
-  background-color: #34495e;
-  color: white;
+  background-color: rgba(135, 206, 235, 0.2);
+  color: #333;
   text-decoration: none;
 }
 
 .topnav a.active {
-  background-color: #3498db;
-  color: white;
+  background-color: #87ceeb;
+  color: #333;
 }
 
 /* Hero section */
 .hero {
-  background: linear-gradient(to right, #b10ced, #ed530c);
-  color: white;
+  background: linear-gradient(135deg, #d0e7ff 0%, #a0c4ff 100%);
+  color: #333;
   padding: 60px 20px;
   text-align: center;
   margin-bottom: 30px;
+  box-shadow: inset 0 0 100px rgba(255, 255, 255, 0.3);
 }
 
 .hero h1 {
-  color: white;
+  color: #333;
   font-size: 3rem;
   margin-bottom: 20px;
 }
@@ -153,19 +156,23 @@ h6 {
 
 .btn {
   display: inline-block;
-  background-color: #e74c3c;
-  color: white;
+  background-color: rgba(255, 107, 53, 0.4);
+  color: #fff;
   padding: 12px 24px;
-  border-radius: 5px;
+  border-radius: 25px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   text-decoration: none;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn:hover {
-  background-color: #c0392b;
+  background-color: rgba(255, 107, 53, 0.6);
   text-decoration: none;
-  color: white;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
 }
 
 /* Games grid */
@@ -197,8 +204,8 @@ h6 {
   width: 100%;
   height: 100px;
   border: none;
-  border-radius: 10px;
-  background-color: white;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
   cursor: pointer;
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -208,6 +215,8 @@ h6 {
   align-items: center;
   overflow: hidden;
   position: relative;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .game-item button:hover,
@@ -305,11 +314,13 @@ h6 {
 
 /* Marquee styling */
 .marquee-container {
-  background-color: #f8f9fa;
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 10px;
   margin: 20px 0;
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 marquee {
@@ -514,7 +525,6 @@ body.dark-theme .hero {
   padding: 10px 20px;
   background-color: #ff4081;
   color: white;
-  align-self: ;
   margin-right: auto;
   margin-bottom: 20px;
   border: none;
