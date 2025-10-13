@@ -776,6 +776,76 @@
     requestAnimationFrame(loop);
   })();
 </script>
+<script>
+  // Configuration
+  const POPUP_DELAY = 2000; // Show popup after 2 seconds (in milliseconds)
+    const POPUP_STORAGE_KEY = 'feedbackPopupShown';
+
+    // Check if popup should be shown
+    function shouldShowPopup() {
+      // Check localStorage to see if user has already dismissed or clicked
+      return !localStorage.getItem(POPUP_STORAGE_KEY);
+    }
+
+    // Show the popup
+    function showPopup() {
+      if (shouldShowPopup()) {
+        setTimeout(() => {
+          document.getElementById('feedbackPopup').classList.add('active');
+        }, POPUP_DELAY);
+      }
+    }
+
+    // Close the popup
+    function closePopup() {
+      document.getElementById('feedbackPopup').classList.remove('active');
+      // Save to localStorage so popup doesn't show again
+      localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+    }
+
+    // Handle feedback button click
+    function handleFeedbackClick() {
+      // Save to localStorage so popup doesn't show again
+      localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+      // Link will open automatically, popup will close
+      setTimeout(closePopup, 300);
+    }
+
+    // Close popup when clicking outside
+    document.getElementById('feedbackPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePopup();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePopup();
+      }
+    });
+
+    // Initialize - show popup on page load
+    showPopup();
+</script>
+<!-- Auto Popup -->
+  <div class="popup-overlay" id="feedbackPopup">
+    <div class="popup-container">
+      <button class="popup-close" onclick="closePopup()">&times;</button>
+      
+      <div class="popup-icon">💬</div>
+      <h2 class="popup-title">We'd Love Your Feedback!</h2>
+      <p class="popup-message">
+        Help us improve by sharing your thoughts. It only takes a minute!
+      </p>
+
+      <a href="https://forms.gle/k644MqzAb1SthzXy5" class="popup-button" target="_blank" onclick="handleFeedbackClick()">
+        Give Feedback
+      </a>
+
+      <button class="popup-dismiss" onclick="closePopup()">Maybe later</button>
+    </div>
+  </div>
   <script src="js/themeswitcher.js"></script>
   <div id="flag-drawer">
     <div id="flag-drawer-tab">🏳️</div>
