@@ -21,4 +21,4 @@ The minimal version of Space Cat Games is designed to be deployed on low-spec se
 
 
 
-&copy; Nijika Softworks, 2025
+&copy; Starry Systems, 2025
