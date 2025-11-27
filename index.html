@@ -128,8 +128,8 @@
   // Set your server's current version here
   const serverVersion = "16"; // <-- update as needed
 
-  const user = "Ijichi-Systems";
-  const repo = "space-cat-games";
+  const user = "Starry-Systems";
+  const repo = "spacecatgames";
 
   Promise.all([
     fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=1`).then(r => r.json()),
@@ -190,7 +190,7 @@
 
           // Try GitHub API, fallback to 'unknown'.
           (function() {
-            fetch("https://api.github.com/repos/Ijichi-Systems/space-cat-games/commits?per_page=1")
+            fetch("https://api.github.com/repos/Starry-Systems/spacecatgames/commits?per_page=1")
               .then(r => r.json())
               .then(data => {
                 if (Array.isArray(data) && data[0] && data[0].sha) {
