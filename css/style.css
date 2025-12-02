@@ -3,20 +3,24 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 32px 24px; /* adjust as needed */
+  gap: 32px 24px;
+  /* adjust as needed */
   margin: 0 auto 2em auto;
   padding: 0;
 }
+
 .game-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
+
 /* Center text utility class */
 .center-text {
   text-align: center;
 }
+
 /* Reset and base styles */
 .ad-img-small {
   max-width: 180px;
@@ -73,6 +77,7 @@ h2 {
   padding: 15px 0;
   border-bottom: 2px solid #e0e0e0;
 }
+
 h3 {
   font-size: 2rem;
   padding: 15px 0;
@@ -201,8 +206,8 @@ h6 {
 }
 
 .game-item button {
-  width: 100%;
-  height: 100px;
+  width: 150px;
+  height: 120px;
   border: none;
   border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.2);
@@ -245,11 +250,9 @@ h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
+  background: radial-gradient(circle,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0) 70%);
   opacity: 0;
   transform: scale(0.5);
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -262,12 +265,14 @@ h6 {
 }
 
 .game-item img {
-  max-width: 80px;
-  max-height: 80px;
-  object-fit: contain;
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  object-position: center;
   transition: transform 0.3s ease;
   z-index: 2;
   position: relative;
+  border-radius: 8px;
 }
 
 .game-item:hover img,
@@ -276,11 +281,16 @@ h6 {
 }
 
 .game-item p {
-  margin-top: 10px;
+  margin-top: 12px;
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
   display: inline-block;
+  line-height: 1.4;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* --- RED HOVER FOR GAME BUTTON TEXT --- */
@@ -459,22 +469,24 @@ footer {
   }
 
   .game-item {
-    width: 110px;
+    width: 120px;
   }
 
   .game-item button {
-    height: 80px;
+    width: 120px;
+    height: 100px;
   }
 
   .game-item img {
-    max-width: 60px;
-    max-height: 60px;
+    width: 70px;
+    height: 70px;
   }
 
   .footer-links a {
     margin: 5px 10px;
   }
 }
+
 /* ...existing code... */
 
 /* Dark Theme Support */
@@ -653,6 +665,7 @@ body.dark-theme .hero {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -663,6 +676,7 @@ body.dark-theme .hero {
     opacity: 0;
     transform: translateY(30px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
