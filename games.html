@@ -26,6 +26,14 @@
     gtag('config', 'G-TTZS202J2Q');
   </script>
 
+  <script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
+  <script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
+
+  <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+  <script>
+    window.ezstandalone = window.ezstandalone || {};
+    ezstandalone.cmd = ezstandalone.cmd || [];
+  </script>
 </head>
 <script>
   window.addEventListener('load', function () {
@@ -83,14 +91,14 @@
     <p>Error Code = 0x00004</p>
   </noscript>
   <div class="topnav">
-      <a href="index.html">Home</a>
-      <a href="games.html">Games</a>
-      <a href="https://nijikasoftworks.meowcat.site/">News</a>
-      <a href="opensource.html">Source Code</a>
-      <a href="credits.html">Credits</a>
-      <a href="changelog.html">Changelog</a>
-      <a href="archive.html">Archive</a>
-      <a href="https://nerdverse.dev">Help</a>
+    <a href="index.html">Home</a>
+    <a href="games.html">Games</a>
+    <a href="https://nijikasoftworks.meowcat.site/">News</a>
+    <a href="opensource.html">Source Code</a>
+    <a href="credits.html">Credits</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="archive.html">Archive</a>
+    <a href="https://nerdverse.dev">Help</a>
   </div>
   <div class="container">
     <script type="text/javascript"
@@ -701,41 +709,40 @@
         <p>Melon Playground</p>
       </div>
 
-      </div>
-
-
-
-
-
-
-
-
-
     </div>
 
 
-    <footer>
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-links">
-            <a href="index.html">Home</a>
-            <a href="games.html">Games</a>
-            <a href="credits.html">Credits</a>
-            <a href="opensource.html">Open Source</a>
-            <a href="changelog.html">Changelog</a>
-            <a href="archive.html">Archive</a>
-          </div>
-          <p>Powered by Space Cat Games</p>
-          <p class="copyright">© 2025 Nijika Softworks & Starry Systems. All rights reserved.</p>
-          <a href="https://nijikasoftworks.meowcat.site/"><img src="images/ns_yellow.png" height="150"
-              width="500" /></a>
-          <a href="https://github.com/Starry-Systems/"><img
-              src="https://avatars.githubusercontent.com/u/241321890?s=200&v=4" height="150" /></a>
-        </div>
-    </footer>
 
-    <!-- FPS Counter -->
-    <div id="fps-counter" style="
+
+
+
+
+
+
+  </div>
+
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="games.html">Games</a>
+          <a href="credits.html">Credits</a>
+          <a href="opensource.html">Open Source</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="archive.html">Archive</a>
+        </div>
+        <p>Powered by Space Cat Games</p>
+        <p class="copyright">© 2025 Nijika Softworks & Starry Systems. All rights reserved.</p>
+        <a href="https://nijikasoftworks.meowcat.site/"><img src="images/ns_yellow.png" height="150" width="500" /></a>
+        <a href="https://github.com/Starry-Systems/"><img
+            src="https://avatars.githubusercontent.com/u/241321890?s=200&v=4" height="150" /></a>
+      </div>
+  </footer>
+
+  <!-- FPS Counter -->
+  <div id="fps-counter" style="
   position: fixed;
   top: 10px;
   right: 10px;
@@ -748,151 +755,151 @@
   z-index: 9999;
   pointer-events: none;
 ">FPS: --</div>
-    <script>
-      (function () {
-        let lastFrame = performance.now();
-        let frames = 0;
-        let fps = 0;
-        function loop(now) {
-          frames++;
-          if (now - lastFrame >= 1000) {
-            fps = frames;
-            frames = 0;
-            lastFrame = now;
-            document.getElementById('fps-counter').textContent = 'FPS: ' + fps;
-          }
-          requestAnimationFrame(loop);
+  <script>
+    (function () {
+      let lastFrame = performance.now();
+      let frames = 0;
+      let fps = 0;
+      function loop(now) {
+        frames++;
+        if (now - lastFrame >= 1000) {
+          fps = frames;
+          frames = 0;
+          lastFrame = now;
+          document.getElementById('fps-counter').textContent = 'FPS: ' + fps;
         }
         requestAnimationFrame(loop);
-      })();
-    </script>
-
-    <script>
-      // Configuration
-      const POPUP_DELAY = 2000; // Show popup after 2 seconds (in milliseconds)
-      const POPUP_STORAGE_KEY = 'feedbackPopupShown';
-
-      // Check if popup should be shown
-      function shouldShowPopup() {
-        // Check localStorage to see if user has already dismissed or clicked
-        return !localStorage.getItem(POPUP_STORAGE_KEY);
       }
+      requestAnimationFrame(loop);
+    })();
+  </script>
 
-      // Show the popup
-      function showPopup() {
-        if (shouldShowPopup()) {
-          setTimeout(() => {
-            document.getElementById('feedbackPopup').classList.add('active');
-          }, POPUP_DELAY);
-        }
+  <script>
+    // Configuration
+    const POPUP_DELAY = 2000; // Show popup after 2 seconds (in milliseconds)
+    const POPUP_STORAGE_KEY = 'feedbackPopupShown';
+
+    // Check if popup should be shown
+    function shouldShowPopup() {
+      // Check localStorage to see if user has already dismissed or clicked
+      return !localStorage.getItem(POPUP_STORAGE_KEY);
+    }
+
+    // Show the popup
+    function showPopup() {
+      if (shouldShowPopup()) {
+        setTimeout(() => {
+          document.getElementById('feedbackPopup').classList.add('active');
+        }, POPUP_DELAY);
       }
+    }
 
-      // Close the popup
-      function closePopup() {
-        document.getElementById('feedbackPopup').classList.remove('active');
-        // Save to localStorage so popup doesn't show again
-        localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+    // Close the popup
+    function closePopup() {
+      document.getElementById('feedbackPopup').classList.remove('active');
+      // Save to localStorage so popup doesn't show again
+      localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+    }
+
+    // Handle feedback button click
+    function handleFeedbackClick() {
+      // Save to localStorage so popup doesn't show again
+      localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+      // Link will open automatically, popup will close
+      setTimeout(closePopup, 300);
+    }
+
+    // Close popup when clicking outside
+    document.getElementById('feedbackPopup').addEventListener('click', function (e) {
+      if (e.target === this) {
+        closePopup();
       }
+    });
 
-      // Handle feedback button click
-      function handleFeedbackClick() {
-        // Save to localStorage so popup doesn't show again
-        localStorage.setItem(POPUP_STORAGE_KEY, 'true');
-        // Link will open automatically, popup will close
-        setTimeout(closePopup, 300);
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closePopup();
       }
+    });
 
-      // Close popup when clicking outside
-      document.getElementById('feedbackPopup').addEventListener('click', function (e) {
-        if (e.target === this) {
-          closePopup();
-        }
-      });
-
-      // Close on Escape key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-          closePopup();
-        }
-      });
-
-      // Initialize - show popup on page load
-      showPopup();
-    </script>
-    <script src="js/themeswitcher.js"></script>
-    <div id="flag-drawer">
-      <div id="flag-drawer-tab">🏳️</div>
-      <div id="flag-drawer-content">
-        <img
-          src="https://count.getloli.com/@:spacecatgames?name=%3Aspacecatgames&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=0&prefix=0">
-        </a>
-        <br />
-      </div>
+    // Initialize - show popup on page load
+    showPopup();
+  </script>
+  <script src="js/themeswitcher.js"></script>
+  <div id="flag-drawer">
+    <div id="flag-drawer-tab">🏳️</div>
+    <div id="flag-drawer-content">
+      <img
+        src="https://count.getloli.com/@:spacecatgames?name=%3Aspacecatgames&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=0&prefix=0">
+      </a>
+      <br />
     </div>
+  </div>
 
-    <style>
-      #flag-drawer {
-        position: fixed;
-        top: 120px;
-        right: -184px;
-        /* 220px (drawer width) - 36px (tab width) */
-        width: 220px;
-        transition: right 0.3s;
-        z-index: 10000;
-      }
+  <style>
+    #flag-drawer {
+      position: fixed;
+      top: 120px;
+      right: -184px;
+      /* 220px (drawer width) - 36px (tab width) */
+      width: 220px;
+      transition: right 0.3s;
+      z-index: 10000;
+    }
 
-      #flag-drawer.open {
-        right: 0;
-      }
+    #flag-drawer.open {
+      right: 0;
+    }
 
-      #flag-drawer-tab {
-        position: absolute;
-        left: -36px;
-        top: 0;
-        width: 36px;
-        height: 60px;
-        background: #222;
-        color: #fff;
-        border-radius: 8px 0 0 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        user-select: none;
-      }
+    #flag-drawer-tab {
+      position: absolute;
+      left: -36px;
+      top: 0;
+      width: 36px;
+      height: 60px;
+      background: #222;
+      color: #fff;
+      border-radius: 8px 0 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
 
-      #flag-drawer-content {
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px 0 0 8px;
-        padding: 10px 5px 10px 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        min-width: 180px;
-        min-height: 70px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow-x: auto;
-      }
+    #flag-drawer-content {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px 0 0 8px;
+      padding: 10px 5px 10px 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      min-width: 180px;
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;
+    }
 
-      #flag-drawer-content img {
-        max-width: 100%;
-        height: auto;
-      }
-    </style>
-    <script>
-      // Flag Drawer Toggle
-      document.addEventListener("DOMContentLoaded", function () {
-        const drawer = document.getElementById("flag-drawer");
-        const tab = document.getElementById("flag-drawer-tab");
-        tab.addEventListener("click", function () {
-          drawer.classList.toggle("open");
-        });
+    #flag-drawer-content img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+  <script>
+    // Flag Drawer Toggle
+    document.addEventListener("DOMContentLoaded", function () {
+      const drawer = document.getElementById("flag-drawer");
+      const tab = document.getElementById("flag-drawer-tab");
+      tab.addEventListener("click", function () {
+        drawer.classList.toggle("open");
       });
-    </script>
+    });
+  </script>
 </body>
 
 </html>
