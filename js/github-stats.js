@@ -46,7 +46,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching GitHub stats:', error);
             // Fallback to API: Fetch contributors stats to sum up additions/deletions/commits
             fetch('https://api.github.com/repos/Starry-Systems/spacecatgames/stats/contributors')
-                .then(r => r.json())
+                .then(r => {
+                    if (r.status === 202) {
+                        // 202 means stats are computing. Fallback to basic repo stats.
+                        throw new Error('Stats computing (202)');
+                    }
+                    return r.json();
+                })
                 .then(data => {
                     if (!Array.isArray(data)) throw new Error('Invalid API response');
 
@@ -71,8 +77,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     `;
                 })
                 .catch(apiError => {
-                    console.error('API Fallback Error:', apiError);
-                    statsContainer.innerHTML = '<p>Unable to load stats at this time.</p>';
+                    console.warn('Detailed stats failed, falling back to basic stats:', apiError);
+                    // Final fallback: Basic repo stats (Stars, Forks, Issues)
+                    fetch('https://api.github.com/repos/Starry-Systems/spacecatgames')
+                        .then(r => r.json())
+                        .then(data => {
+                            statsContainer.innerHTML = `
+                                <h3>Repository Stats</h3>
+                                <p><strong>Stars:</strong> ${data.stargazers_count}</p>
+                                <p><strong>Forks:</strong> ${data.forks_count}</p>
+                                <p><strong>Open Issues:</strong> ${data.open_issues_count}</p>
+                                <small><a href="${data.html_url}" target="_blank">View on GitHub</a></small>
+                            `;
+                        })
+                        .catch(finalError => {
+                            statsContainer.innerHTML = '<p>Unable to load stats at this time.</p>';
+                        });
                 });
         });
 });
