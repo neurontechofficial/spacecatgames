@@ -1,12 +1,13 @@
-
-<!doctype html>
+<!DOCTYPE html>
+<!--TO BE CLEANED-->
 <html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Super Mario 64</title>
     <style>
-      body, html{
+      body,
+      html {
         margin: 0;
         padding: 0;
         width: 100vw;
@@ -31,46 +32,55 @@
         height: 100vh;
       }
     </style>
-  <script>(function(s){s.dataset.zone='10290304',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-</head>
+    <script>
+      (function (s) {
+        (s.dataset.zone = "10290304"), (s.src = "https://nap5k.com/tag.min.js");
+      })(
+        [document.documentElement, document.body]
+          .filter(Boolean)
+          .pop()
+          .appendChild(document.createElement("script"))
+      );
+    </script>
+  </head>
   <body>
     <div id="container">
       <canvas class="emscripten" id="canvas"></canvas>
     </div>
-    <script type='text/javascript'>
+    <script type="text/javascript">
       var Module = {
         preRun: [],
         postRun: [],
-        print: (function() {
-          return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+        print: (function () {
+          return function (text) {
+            if (arguments.length > 1)
+              text = Array.prototype.slice.call(arguments).join(" ");
             console.log(text);
           };
         })(),
-        printErr: function(text) {
+        printErr: function (text) {
           if (arguments.length > 1)
-            text = Array.prototype.slice.call(arguments).join(' ');
+            text = Array.prototype.slice.call(arguments).join(" ");
           console.error(text);
         },
-        canvas: (function() {
-          var canvas = document.getElementById('canvas');
+        canvas: (function () {
+          var canvas = document.getElementById("canvas");
           canvas.width = window.innerWidth; // Todo: how to do this from c++
           canvas.height = window.innerHeight;
-          canvas.addEventListener("webglcontextlost", function(e) {
-            alert('WebGL context lost. You will need to reload the page.');
-            e.preventDefault();
-          }, false);
+          canvas.addEventListener(
+            "webglcontextlost",
+            function (e) {
+              alert("WebGL context lost. You will need to reload the page.");
+              e.preventDefault();
+            },
+            false
+          );
           return canvas;
         })(),
-        setStatus: function(text) {
-        }
+        setStatus: function (text) {},
       };
     </script>
     <script async type="text/javascript" src="sm64.us.f3dex2e.js"></script>
-    <script>
-    </script>
+    <script></script>
   </body>
 </html>
-
-
-
