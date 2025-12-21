@@ -1,15 +1,3 @@
-(function () {
-  var hostname = window.location.hostname;
-  var allowedDomains = ["spacecatgames.site", "localhost", "127.0.0.1"];
-  // Check if the current hostname is NOT in the allowed list
-  if (!allowedDomains.includes(hostname)) {
-    // Ask the user if they want to go to the official site
-    if (confirm("You are accessing this site from a non-official domain (" + hostname + "). Would you like to go to the official site (spacecatgames.site)?")) {
-      window.location.href = "https://spacecatgames.site" + window.location.pathname + window.location.search + window.location.hash;
-    }
-  }
-})();
-
 console.log("Dark/Light theme switcher loaded into DOM.");
 // Create or find the theme toggle button
 function createThemeToggleButton() {
