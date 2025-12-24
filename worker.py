@@ -1,37 +1,54 @@
 import subprocess
-import json
 import os
 import time
 import logging
 from pathlib import Path
 
-MODEL = "tinyllama"
-SLEEP_SECONDS = 1
-MAX_LINES = 100
+# =====================
+# Configuration
+# =====================
+
+MODEL = "tinyllama"          # keep small for Steam Deck
+SLEEP_SECONDS = 2
+MAX_LINES = 300              # increased context
 EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
-# `WORKER_DIRS_ENV` may be either:
-# - a comma-separated literal list like "js, css, ." (the token `.` means repo root files), or
-# - the name of an environment variable that contains such a comma-separated list.
-WORKER_DIRS_ENV = "js, css, ."  # literal list or env-var name (optional)
 BRANCH = "main"
+
+# Either:
+#  - comma-separated literal list: "js,css,."
+#  - or env var name containing such a list
+WORKER_DIRS_SPEC = "js,css,."
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 
+# =====================
+# Helpers
+# =====================
 
 def run(cmd):
     try:
-        return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
+        return subprocess.check_output(
+            cmd, shell=True, text=True, stderr=subprocess.DEVNULL
+        ).strip()
     except subprocess.CalledProcessError:
         return ""
 
 def clean_repo():
-    return run("git status --porcelain").strip() == ""
+    return run("git status --porcelain") == ""
+
+def is_skippable(file):
+    return (
+        file.endswith(".min.js")
+        or file.endswith(".min.css")
+        or "/libs/" in file
+        or "/vendor/" in file
+        or "/dist/" in file
+        or "/build/" in file
+    )
 
 def get_allowed_dirs(files):
-    spec = WORKER_DIRS_ENV
+    spec = WORKER_DIRS_SPEC
 
-    # If spec contains a comma, assume it's a literal list provided in the file.
-    # Otherwise treat it as the name of an env var and try to read it.
     if "," not in spec:
         spec = os.environ.get(spec, "")
 
@@ -39,26 +56,34 @@ def get_allowed_dirs(files):
         allowed = [d.strip() for d in spec.split(",") if d.strip()]
         return allowed[:3]
 
-    # discover top-level directories from tracked files and pick first 3
     tops = []
     for f in files:
         if "/" in f:
             top = f.split("/", 1)[0]
-        else:
-            top = "."  # root-level file
-        if top not in tops:
-            tops.append(top)
-            if len(tops) >= 3:
-                break
+            if top not in tops:
+                tops.append(top)
+                if len(tops) >= 3:
+                    break
     return tops
-
-
 
 def get_files():
     files = run("git ls-files").splitlines()
     allowed = set(get_allowed_dirs(files))
-    logging.info("Allowed top-level dirs: %s", ",".join(allowed) if allowed else "(none)")
-    return [f for f in files if Path(f).suffix in EXTS and (f.split('/', 1)[0] in allowed)]
+    logging.info(
+        "Allowed top-level dirs: %s",
+        ",".join(allowed) if allowed else "(none)",
+    )
+
+    out = []
+    for f in files:
+        if Path(f).suffix not in EXTS:
+            continue
+        if is_skippable(f):
+            continue
+        top = f.split("/", 1)[0] if "/" in f else "."
+        if top in allowed:
+            out.append(f)
+    return out
 
 def ask_ollama(prompt):
     try:
@@ -70,12 +95,12 @@ def ask_ollama(prompt):
             text=True,
         )
     except FileNotFoundError:
-        logging.warning("'ollama' binary not found; skipping AI patches.")
+        logging.warning("ollama not found")
         return ""
 
     try:
-        out, _ = p.communicate(prompt, timeout=90)
-        return out
+        out, _ = p.communicate(prompt, timeout=120)
+        return out or ""
     except subprocess.TimeoutExpired:
         p.kill()
         logging.warning("Ollama timed out")
@@ -93,7 +118,11 @@ def apply_patch(patch):
     except Exception:
         logging.exception("Failed to apply patch")
 
-print("AI maintainer running")
+# =====================
+# Main loop
+# =====================
+
+print("🤖 AI maintainer running")
 
 while True:
     print("\n=== Cycle start ===")
@@ -102,27 +131,35 @@ while True:
         print("Repo dirty, skipping.")
         time.sleep(SLEEP_SECONDS)
         continue
+
     print("Fetching origin...")
     run("git fetch origin")
-    print("checking out...")
+
+    print("Checking out branch...")
     run(f"git checkout -B {BRANCH} origin/{BRANCH}")
 
     for file in get_files():
         try:
-            text = "\n".join(Path(file).read_text().splitlines()[:MAX_LINES])
+            lines = Path(file).read_text(errors="ignore").splitlines()
+            text = "\n".join(lines[:MAX_LINES])
         except Exception:
             continue
 
         prompt = f"""
-You are a senior developer.
+You are a senior developer performing automated maintenance.
 
-Fix bugs and improve code quality.
-Do NOT add features.
-Do NOT change APIs.
-Do NOT reformat unrelated code.
-Post your changes in changelog.html
-Output ONLY a unified git diff.
-Please note you cannot see the games/ folder.
+Task:
+- Fix bugs, edge cases, and obvious correctness issues
+- Small refactors for clarity are allowed
+- Do add new features
+- Do improve the user experience
+- Do NOT change public APIs
+- Do NOT reformat unrelated code
+
+Rules:
+- Output ONLY a unified git diff
+- If no real issues exist, output nothing
+- Keep changes minimal
 
 File: {file}
 
@@ -130,21 +167,19 @@ File: {file}
 """
 
         print(f"Processing {file}")
-        try:
-            patch = ask_ollama(prompt)
-        except Exception:
-            print("Ollama timeout, skipping file.")
+        patch = ask_ollama(prompt)
+
+        if not patch.strip():
             continue
 
         if "diff --git" not in patch:
+            print("Non-diff response (ignored):")
+            print(patch[:200])
             continue
 
-        try:
-            apply_patch(patch)
-        except Exception:
-            continue
+        apply_patch(patch)
 
-    if run("git diff --stat").strip():
+    if run("git diff --stat"):
         print("Committing changes...")
         run('git commit -am "chore: automated code improvements"')
         print("Pushing changes...")
