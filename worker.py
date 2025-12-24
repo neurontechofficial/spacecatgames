@@ -8,7 +8,7 @@ from pathlib import Path
 # Configuration
 # =====================
 
-MODEL = "tinyllama"          # keep small for Steam Deck
+MODEL = "qwen2.5:3b-instruct"    # keep small for Steam Deck (meowcat's PC)
 SLEEP_SECONDS = 2
 MAX_LINES = 300              # increased context
 EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
