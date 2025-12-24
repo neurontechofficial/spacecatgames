@@ -8,7 +8,7 @@ from pathlib import Path
 MODEL = "tinyllama"
 SLEEP_SECONDS = 1
 MAX_LINES = 100
-EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css", ".json"}
+EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 
