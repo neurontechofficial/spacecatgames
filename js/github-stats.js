@@ -1,98 +1,133 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const statsContainer = document.getElementById('github-stats');
-    const proxyUrl = 'https://corsproxy.io/?';
-    const targetUrl = 'https://github.com/neurontechofficial/spacecatgames/pulse';
+document.addEventListener('DOMContentLoaded', () => {
+    const OWNER = 'neurontechofficial';
+    const REPO = 'spacecatgames';
 
-    fetch(proxyUrl + encodeURIComponent(targetUrl))
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
+    const container = document.getElementById('github-stats');
+    if (!container) return;
 
-            // Try to find the summary text
-            // GitHub's structure for Pulse summary often looks like:
-            // "Excluding merges, 3 authors have pushed..."
-            // It's usually in a <div class="color-fg-muted"> or similar near the top of the pulse page.
+    container.innerHTML = '<p>Loading GitHub stats…</p>';
 
-            // Strategy: Look for the specific text pattern "additions and"
-            const allDivs = doc.querySelectorAll('div');
-            let summaryText = '';
+    const api = (path) =>
+    fetch(`https://api.github.com/repos/${OWNER}/${REPO}${path}`)
+    .then(r => {
+        if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
+        return r.json();
+    });
 
-            for (let div of allDivs) {
-                // The pulse summary is often split into two sentences.
-                // Sentence 1: "Excluding merges, X authors have pushed Y commits..."
-                // Sentence 2: "On main, Z files have changed and there have been A additions and B deletions."
-                if (div.textContent.includes('additions and') && div.textContent.includes('deletions')) {
-                    summaryText = div.textContent.trim();
-                    break;
-                }
-            }
+    /* ---------- Basic repo info ---------- */
+    api('')
+    .then(repo => {
+        const lastUpdated = new Date(repo.pushed_at).toLocaleString();
 
-            if (summaryText) {
-                // Clean up whitespace
-                summaryText = summaryText.replace(/\s+/g, ' ').trim();
+        container.innerHTML = `
+        <h3>Repository Stats</h3>
+        <p><strong>Stars:</strong> ${repo.stargazers_count}</p>
+        <p><strong>Forks:</strong> ${repo.forks_count}</p>
+        <p><strong>Open Issues:</strong> ${repo.open_issues_count}</p>
+        <p><strong>Last Updated:</strong> ${lastUpdated}</p>
 
-                // Format it nicely
-                statsContainer.innerHTML = `
-                    <h3>GitHub Activity (Pulse)</h3>
-                    <p>${summaryText}</p>
-                    <small>Data fetched from GitHub Pulse</small>
-                `;
-            } else {
-                throw new Error('Could not find summary text in page');
-            }
+        <h4>Commit Activity</h4>
+        <canvas id="commit-graph" width="600" height="200"></canvas>
+
+        <h4>Branches</h4>
+        <ul id="branch-stats"><li>Loading branches…</li></ul>
+
+        <small>
+        <a href="${repo.html_url}" target="_blank">View on GitHub</a>
+        </small>
+        `;
+    })
+    .then(loadCommitGraph)
+    .then(loadBranchStats)
+    .catch(err => {
+        console.error(err);
+        container.innerHTML = '<p>Unable to load GitHub stats.</p>';
+    });
+
+    /* ---------- Commit activity graph ---------- */
+    function loadCommitGraph() {
+        return api('/stats/commit_activity')
+        .then(data => {
+            // GitHub may return 202 if still computing
+            if (!Array.isArray(data)) throw new Error('Commit stats unavailable');
+
+            const canvas = document.getElementById('commit-graph');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const weeks = data.slice(-26); // last ~6 months
+            const max = Math.max(...weeks.map(w => w.total), 1);
+
+            const barWidth = canvas.width / weeks.length;
+
+            weeks.forEach((week, i) => {
+                const height = (week.total / max) * (canvas.height - 20);
+                ctx.fillStyle = '#4f46e5';
+                ctx.fillRect(
+                    i * barWidth,
+                    canvas.height - height,
+                    barWidth - 2,
+                    height
+                );
+            });
+
+            ctx.fillStyle = '#666';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Commits per week (last 6 months)', 10, 15);
         })
-        .catch(error => {
-            console.error('Error fetching GitHub stats:', error);
-            // Fallback to API: Fetch contributors stats to sum up additions/deletions/commits
-            fetch('https://api.github.com/repos/Starry-Systems/spacecatgames/stats/contributors')
-                .then(r => {
-                    if (r.status === 202) {
-                        // 202 means stats are computing. Fallback to basic repo stats.
-                        throw new Error('Stats computing (202)');
-                    }
-                    return r.json();
-                })
-                .then(data => {
-                    if (!Array.isArray(data)) throw new Error('Invalid API response');
-
-                    let totalCommits = 0;
-                    let totalAdditions = 0;
-                    let totalDeletions = 0;
-
-                    data.forEach(contributor => {
-                        totalCommits += contributor.total;
-                        contributor.weeks.forEach(week => {
-                            totalAdditions += week.a;
-                            totalDeletions += week.d;
-                        });
-                    });
-
-                    statsContainer.innerHTML = `
-                        <h3>Repository Stats</h3>
-                        <p><strong>Total Commits:</strong> ${totalCommits.toLocaleString()}</p>
-                        <p><strong>Additions:</strong> ${totalAdditions.toLocaleString()}</p>
-                        <p><strong>Deletions:</strong> ${totalDeletions.toLocaleString()}</p>
-                        <small><a href="https://github.com/Starry-Systems/spacecatgames" target="_blank">View on GitHub</a></small>
-                    `;
-                })
-                .catch(apiError => {
-                    console.warn('Detailed stats failed, falling back to basic stats:', apiError);
-                    // Final fallback: Basic repo stats (Stars, Forks, Issues)
-                    fetch('https://api.github.com/repos/Starry-Systems/spacecatgames')
-                        .then(r => r.json())
-                        .then(data => {
-                            statsContainer.innerHTML = `
-                                <h3>Repository Stats</h3>
-                                <p><strong>Stars:</strong> ${data.stargazers_count}</p>
-                                <p><strong>Forks:</strong> ${data.forks_count}</p>
-                                <p><strong>Open Issues:</strong> ${data.open_issues_count}</p>
-                                <small><a href="${data.html_url}" target="_blank">View on GitHub</a></small>
-                            `;
-                        })
-                        .catch(finalError => {
-                            statsContainer.innerHTML = '<p>Unable to load stats at this time.</p>';
-                        });
-                });
+        .catch(err => {
+            console.warn('Commit graph unavailable:', err);
+            const canvas = document.getElementById('commit-graph');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#666';
+                ctx.fillText('Commit activity unavailable', 10, 20);
+            }
         });
+    }
+
+    /* ---------- Per-branch stats ---------- */
+    function loadBranchStats() {
+        return api('/branches')
+        .then(branches => {
+            const list = document.getElementById('branch-stats');
+            list.innerHTML = '';
+
+            // Limit to avoid rate-limit explosions
+            const limited = branches.slice(0, 5);
+
+            limited.forEach(branch => {
+                fetch(
+                    `https://api.github.com/repos/${OWNER}/${REPO}/commits?sha=${branch.name}&per_page=1`
+                )
+                .then(r => {
+                    const link = r.headers.get('Link');
+                    let count = 'unknown';
+
+                    if (link && link.includes('rel="last"')) {
+                        const match = link.match(/page=(\d+)>; rel="last"/);
+                        if (match) count = match[1];
+                    } else {
+                        count = '1';
+                    }
+
+                    const li = document.createElement('li');
+                    li.textContent = `${branch.name}: ${count} commits`;
+                    list.appendChild(li);
+                })
+                .catch(() => {
+                    const li = document.createElement('li');
+                    li.textContent = `${branch.name}: unavailable`;
+                    list.appendChild(li);
+                });
+            });
+        })
+        .catch(err => {
+            console.warn('Branch stats unavailable:', err);
+            const list = document.getElementById('branch-stats');
+            list.innerHTML = '<li>Branch data unavailable</li>';
+        });
+    }
 });
