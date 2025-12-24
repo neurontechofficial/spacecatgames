@@ -123,6 +123,7 @@ def apply_patch(patch):
 # =====================
 
 print("🤖 AI maintainer running")
+print ("Using model:", MODEL)
 
 while True:
     print("\n=== Cycle start ===")
