@@ -86,6 +86,7 @@ Fix bugs and improve code quality.
 Do NOT add features.
 Do NOT change APIs.
 Do NOT reformat unrelated code.
+Post your changes in changelog.html
 Output ONLY a unified git diff.
 
 File: {file}
