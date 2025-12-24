@@ -2,6 +2,7 @@ import subprocess
 import json
 import os
 import time
+import logging
 from pathlib import Path
 
 MODEL = "tinyllama"
@@ -9,8 +10,14 @@ SLEEP_SECONDS = 1
 MAX_LINES = 100
 EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css", ".json"}
 
+logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
+
+
 def run(cmd):
-    return subprocess.check_output(cmd, shell=True, text=True)
+    try:
+        return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        return ""
 
 def clean_repo():
     return run("git status --porcelain").strip() == ""
@@ -20,24 +27,37 @@ def get_files():
     return [f for f in files if Path(f).suffix in EXTS]
 
 def ask_ollama(prompt):
-    p = subprocess.Popen(
-        ["ollama", "run", MODEL],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True,
-    )
-    out, _ = p.communicate(prompt, timeout=90)
-    return out
+    try:
+        p = subprocess.Popen(
+            ["ollama", "run", MODEL],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+    except FileNotFoundError:
+        logging.warning("'ollama' binary not found; skipping AI patches.")
+        return ""
+
+    try:
+        out, _ = p.communicate(prompt, timeout=90)
+        return out
+    except subprocess.TimeoutExpired:
+        p.kill()
+        logging.warning("Ollama timed out")
+        return ""
 
 def apply_patch(patch):
-    p = subprocess.Popen(
-        ["git", "apply"],
-        stdin=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True,
-    )
-    p.communicate(patch)
+    try:
+        p = subprocess.Popen(
+            ["git", "apply"],
+            stdin=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+        p.communicate(patch, timeout=10)
+    except Exception:
+        logging.exception("Failed to apply patch")
 
 print("AI maintainer (Python, memory-safe) running")
 
