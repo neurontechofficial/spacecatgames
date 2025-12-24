@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 
 # --- Configuration ---
-MODEL = "bigcode/starcoder"  # Hugging Face model for code generation
+MODEL = "bigcode/santacoder"  # Hugging Face model for code generation
 HF_TOKEN = os.getenv("HF_API_TOKEN")
 SLEEP_SECONDS = 5
 EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
