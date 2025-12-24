@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const statsContainer = document.getElementById('github-stats');
     const proxyUrl = 'https://corsproxy.io/?';
-    const targetUrl = 'https://github.com/Starry-Systems/spacecatgames/pulse';
+    const targetUrl = 'https://github.com/neurontechofficial/spacecatgames/pulse';
 
     fetch(proxyUrl + encodeURIComponent(targetUrl))
         .then(response => response.text())
