@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 
 # --- Configuration ---
-MODEL = "gemini-code-1"  # Gemini 2.0 Flash model
+MODEL = "gemini-2.0-flash-exp"  # Gemini 2.0 Flash model
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")  # must be set
 SLEEP_SECONDS = 5
 EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
@@ -52,25 +52,29 @@ def ask_gemini(prompt):
         logging.warning("GEMINI_API_KEY not set; skipping API call.")
         return ""
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateText"
-    headers = {"Authorization": f"Bearer {GEMINI_KEY}", "Content-Type": "application/json"}
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
+    headers = {"x-goog-api-key": GEMINI_KEY, "Content-Type": "application/json"}
     payload = {
-        "prompt": {"text": prompt},
-        "temperature": 0.2,
-        "candidate_count": 1,
-        "max_output_tokens": 1024,
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.2,
+            "candidateCount": 1,
+            "maxOutputTokens": 1024,
+        }
     }
 
     try:
         resp = requests.post(url, headers=headers, json=payload, timeout=120)
         resp.raise_for_status()
         out = resp.json()
-        # Gemini returns text in out['candidates'][0]['output']
-        if "candidates" in out and len(out["candidates"]) > 0 and "output" in out["candidates"][0]:
-            return out["candidates"][0]["output"]
-        else:
-            logging.warning("No valid output from Gemini: %s", out)
-            return ""
+        # Gemini returns text in out['candidates'][0]['content']['parts'][0]['text']
+        if "candidates" in out and len(out["candidates"]) > 0:
+            candidate = out["candidates"][0]
+            if "content" in candidate and "parts" in candidate["content"] and len(candidate["content"]["parts"]) > 0:
+                return candidate["content"]["parts"][0]["text"]
+        
+        logging.warning("No valid output from Gemini: %s", out)
+        return ""
     except requests.exceptions.RequestException as e:
         logging.warning("Gemini API call failed: %s", e)
         return ""
