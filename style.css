@@ -1,16 +1,57 @@
 ```css
+:root {
+  --primary-color: #000;
+  --secondary-color: #fff;
+  --background-color: #f5f5f5;
+  --text-color: #333;
+  --light-theme-background: #f5f5f5;
+  --light-theme-text: #000;
+  --dark-theme-background: #2d2d2d;
+  --dark-theme-text: #eee;
+}
+
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
 body.light-theme {
-  background-color: #f5f5f5;
-  color: #000;
+  background-color: var(--light-theme-background);
+  color: var(--light-theme-text);
 }
 
 body.light-theme .topnav a {
-  color: #000;
+  color: var(--light-theme-text);
 }
 
 body.light-theme .hero {
-  background-color: #fff;
+  background-color: var(--light-theme-background);
 }
 
-/* rest of your code... */
+body.dark-theme {
+  background-color: var(--dark-theme-background);
+  color: var(--dark-theme-text);
+}
+
+body.dark-theme .topnav a {
+  color: var(--dark-theme-text);
+}
+
+body.dark-theme .hero {
+  background-color: var(--dark-theme-background);
+}
+
+body.game-page {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+body.game-page .topnav a {
+  color: var(--text-color);
+}
+
+body.game-page .hero {
+  background-color: var(--background-color);
+}
+
+/* Rest of your CSS code here... */
 ```
