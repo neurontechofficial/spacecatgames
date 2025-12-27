@@ -1,5 +1,5 @@
-```css
-.loading {
+```
+#loading-page .loading {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -9,38 +9,22 @@
   height: 100px;
   border-radius: 50%;
   background-color: #000;
-  opacity: 0;
-  transition: opacity 2s;
+  animation: loading-animation 2s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.loading.show {
-  opacity: 1;
+#loading-page.hide-loading {
+  animation: none;
 }
 
-.loading.hide {
-  opacity: 0;
-  animation: fade-out 2s;
-}
-
-@keyframes fade-out {
+@keyframes loading-animation {
   0% {
-    opacity: 1;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1);
   }
   100% {
-    opacity: 0;
-  }
-}
-
-.loading.show {
-  animation: fade-in 2s;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
+    transform: scale(0.5);
   }
 }
 ```
