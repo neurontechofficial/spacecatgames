@@ -11,7 +11,7 @@ load_dotenv()
 REPO_PATH = "."
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 BRANCH_NAME = "main"
-INTERVAL = 300  # Set to 5 minutes (300s) to avoid spamming
+INTERVAL = 1  # Set to 5 minutes (300s) to avoid spamming
 MODEL_ID = "llama-3.1-8b-instant"
 
 def generate_commit_message(diff_text):
