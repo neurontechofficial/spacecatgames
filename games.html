@@ -11,7 +11,11 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 
-<body class="dark-theme" id="loading-page">
+<body class="dark-theme" id="loading-page" onload="onBodyLoad();">
+  <div class="loading">
+    <div>Loading...</div>
+  </div>
+
   <div class="topnav">
     <a href="index.html">Home</a>
     <a href="games.html">Games</a>
@@ -22,6 +26,15 @@
     <a href="archive.html">Archive</a>
     <a href="https://neurontechnologies.flarum.cloud/d/3-space-cat-games-general">Help</a>
   </div>
+
+  <script>
+    function onBodyLoad() {
+      setTimeout(function() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementsByClassName('loading')[0].style.display = 'none';
+      }, 2000);
+    }
+  </script>
 
   <div class="hero">
     <div class="container">
@@ -47,20 +60,14 @@
               if (Array.isArray(data) && data[0] && data[0].sha) {
                 setBuildId(data[0].sha.substring(0, 7), false);
               } else {
-                setBuildId("unknown", false);
+                setBuildId('unknown', false);
               }
-            });
+            })
+            .catch(() => setBuildId('unknown', false));
         })();
-
-        window.addEventListener("load", function() {
-          const loadingElement = document.getElementById("loading-page");
-          loadingElement.classList.add("hide-loading");
-        });
       </script>
     </div>
   </div>
-
-  <!-- existing page content -->
 </body>
 </html>
 ```
