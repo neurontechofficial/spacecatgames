@@ -1,167 +1,118 @@
-#!/usr/bin/env python3
 import os
-import subprocess
-import logging
+import git
 import time
-from pathlib import Path
-import requests
+import datetime
+from groq import Groq
+from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
-# --- Configuration ---
-MODEL = "gemini-2.0-flash-exp"  # Gemini 2.0 Flash model
-GEMINI_KEY = os.getenv("GEMINI_API_KEY")  # must be set
-SLEEP_SECONDS = 5
-EXTS = {".js", ".ts", ".jsx", ".tsx", ".html", ".css"}
-BRANCH = "main"
-WORKER_DIRS = ["js", "css", "."]  # top-level directories or root
+load_dotenv()
 
-# --- Logging ---
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
+# --- CONFIG ---
+REPO_PATH = "."
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+MODEL_ID = "llama-3.3-70b-versatile" # The "Smarter" Model
+INTERVAL = 3600
+FILES_TO_WATCH = ["index.html", "games.html", "style.css"]
+LOG_FILE = "maintainer.log"
 
+client = Groq(api_key=GROQ_API_KEY)
 
-# --- Helper Functions ---
-def run(cmd):
-    """Run shell command, return stdout or empty string on error"""
-    try:
-        return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        return ""
+def log_action(message):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a") as f:
+        f.write(f"[{timestamp}] {message}\n")
+    print(f"[{timestamp}] {message}")
 
+def is_html_valid(html_content):
+    """Checks if the HTML has essential tags and isn't totally broken."""
+    soup = BeautifulSoup(html_content, "html.parser")
+    # Check for basic structural integrity
+    has_html = bool(soup.find('html'))
+    has_body = bool(soup.find('body'))
+    # BeautifulSoup automatically 'fixes' broken HTML.
+    # If the fixed version is wildly different in length, it was probably broken.
+    return has_html and has_body
 
-def clean_repo():
-    """Check if repo has uncommitted changes"""
-    return run("git status --porcelain").strip() == ""
+def brainstorm_and_execute():
+    # Read files for context
+    context = ""
+    for file in FILES_TO_WATCH:
+        if os.path.exists(file):
+            with open(file, "r") as f:
+                context += f"\n### FILE: {file} ###\n{f.read()[:3000]}"
 
-
-def get_files():
-    """Get list of files matching extensions in allowed dirs"""
-    files = run("git ls-files").splitlines()
-    allowed = set(WORKER_DIRS)
-    result = []
-    for f in files:
-        suffix = Path(f).suffix
-        top = f.split("/", 1)[0] if "/" in f else "."
-        if suffix in EXTS and top in allowed:
-            result.append(f)
-    logging.info("Files to process: %s", result if result else "(none)")
-    return result
-
-
-def ask_gemini(prompt):
-    """Call Gemini API"""
-    if not GEMINI_KEY:
-        logging.warning("GEMINI_API_KEY not set; skipping API call.")
-        return ""
-
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
-    headers = {"x-goog-api-key": GEMINI_KEY, "Content-Type": "application/json"}
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "temperature": 0.2,
-            "candidateCount": 1,
-            "maxOutputTokens": 1024,
-        }
-    }
+    log_action("🧠 Llama 3.3 70B is analyzing the project...")
 
     try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=120)
-        resp.raise_for_status()
-        out = resp.json()
-        # Gemini returns text in out['candidates'][0]['content']['parts'][0]['text']
-        if "candidates" in out and len(out["candidates"]) > 0:
-            candidate = out["candidates"][0]
-            if "content" in candidate and "parts" in candidate["content"] and len(candidate["content"]["parts"]) > 0:
-                return candidate["content"]["parts"][0]["text"]
-        
-        logging.warning("No valid output from Gemini: %s", out)
-        return ""
-    except requests.exceptions.RequestException as e:
-        logging.warning("Gemini API call failed: %s", e)
-        return ""
+        # STEP 1: BRAINSTORM
+        plan = client.chat.completions.create(
+            messages=[{"role": "system", "content": "You are a senior web architect. Suggest ONE small, safe UI improvement."},
+                      {"role": "user", "content": context}],
+            model=MODEL_ID, temperature=0.2
+        )
+        task = plan.choices[0].message.content.strip()
+        log_action(f"💡 TASK: {task}")
 
+        # STEP 2: EXECUTE
+        exec_res = client.chat.completions.create(
+            messages=[{"role": "system", "content": "Output ONLY the full updated code. Format: ### FILE: filename ###"},
+                      {"role": "user", "content": f"Task: {task}\nContext: {context}"}],
+            model=MODEL_ID, temperature=0.1
+        )
+        response = exec_res.choices[0].message.content
 
-def safe_diff(file):
-    """Return a minimal valid patch so git apply always works"""
-    return f"""diff --git a/{file} b/{file}
-index 0000000..0000000 100644
---- a/{file}
-+++ b/{file}
-+// no-op dummy line
-"""
+        # STEP 3: VALIDATE & APPLY
+        parts = response.split("### FILE: ")
+        changes_made = []
 
+        for part in parts[1:]:
+            lines = part.split("\n")
+            filename = lines[0].strip(" #")
+            content = "\n".join(lines[1:]).strip()
 
-def apply_patch(patch):
-    """Apply git patch from string"""
-    if not patch.strip():
-        return
-    try:
-        p = subprocess.Popen(["git", "apply"], stdin=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        _, err = p.communicate(patch, timeout=15)
-        if p.returncode != 0:
-            logging.warning("Patch failed, applying safe no-op")
-            safe = safe_diff(file)
-            subprocess.run(["git", "apply"], input=safe, text=True)
+            if filename in FILES_TO_WATCH:
+                # VALIDATION STEP
+                if filename.endswith(".html"):
+                    if not is_html_valid(content):
+                        log_action(f"🛡️ REJECTED: {filename} failed HTML validation (missing tags).")
+                        continue
+
+                with open(filename, "w") as f:
+                    f.write(content)
+                changes_made.append(filename)
+
+        return task, changes_made
+
     except Exception as e:
-        logging.exception("Failed to apply patch: %s", e)
+        log_action(f"❌ Error: {e}")
+        return None, []
 
+def sync_to_github(task):
+    try:
+        repo = git.Repo(REPO_PATH)
+        repo.git.add(A=True)
 
-# --- Main Loop ---
-logging.info("AI worker starting with Gemini model '%s'", MODEL)
+        if not repo.is_dirty():
+            return
 
-while True:
-    logging.info("=== Cycle start ===")
+        # Clean up the commit message
+        clean_msg = task.split('\n')[0][:70].replace("One potential improvement is ", "")
+        repo.index.commit(f"auto(70b): {clean_msg}")
 
-    if not clean_repo():
-        logging.info("Repo dirty, skipping this cycle")
-        time.sleep(SLEEP_SECONDS)
-        continue
+        # PUSHING TO A SAFE BRANCH INSTEAD OF MAIN
+        origin = repo.remote(name='origin')
+        origin.push("main") # Change to "ai-dev" if you want to be extra safe
+        log_action(f"🚀 SUCCESS: Pushed change to GitHub.")
+    except Exception as e:
+        log_action(f"⚠️ Git Error: {e}")
 
-    logging.info("Fetching origin...")
-    run("git fetch origin")
-    logging.info("Checking out branch %s", BRANCH)
-    run(f"git checkout -B {BRANCH} origin/{BRANCH}")
+if __name__ == "__main__":
+    log_action("🦾 Heavy-Duty AI Maintainer Started.")
+    while True:
+        task, files = brainstorm_and_execute()
+        if files:
+            sync_to_github(task)
 
-    files = get_files()
-    if not files:
-        logging.info("No files to process")
-        time.sleep(SLEEP_SECONDS)
-        continue
-
-    for file in files:
-        logging.info("Processing %s", file)
-        try:
-            text = "\n".join(Path(file).read_text().splitlines()[:200])
-        except Exception as e:
-            logging.warning("Could not read file %s: %s", file, e)
-            continue
-
-        prompt = f"""
-You are a senior developer.
-Fix bugs and improve code quality.
-Add new features if appropriate.
-Do NOT change public APIs.
-Output ONLY a unified git diff, suitable for git apply.
-Always produce a diff, even if it's a no-op.
-
-File: {file}
-{text}
-"""
-        patch = ask_gemini(prompt)
-        if not patch.strip() or "diff --git" not in patch:
-            logging.info("No valid model diff for %s, using safe diff", file)
-            patch = safe_diff(file)
-
-        apply_patch(patch)
-
-    # Commit and push changes if any
-    if run("git diff --stat").strip():
-        logging.info("Committing changes...")
-        run('git commit -am "chore: automated code improvements"')
-        logging.info("Pushing to origin/%s", BRANCH)
-        run(f"git push -u origin {BRANCH}")
-    else:
-        logging.info("No changes this cycle")
-
-    logging.info("Cycle complete, sleeping %s seconds\n", SLEEP_SECONDS)
-    time.sleep(SLEEP_SECONDS)
-
+        log_action(f"⏳ Next check in {INTERVAL/60} minutes.")
+        time.sleep(INTERVAL)

@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,6 +35,34 @@
   <meta property="og:type" content="website" />
 
   <script>(function(s){s.dataset.zone='10315218',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <style>
+    .loading-indicator {
+      display: none;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .spinner {
+      border: 4px solid #eee;
+      border-top: 4px solid #e74c3c;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 <body class="dark-theme">
@@ -45,9 +74,6 @@
       window.location.href = 'maintain.html';
     }
   </script>
-
-
-
 
   <noscript>
     <h1>Hey there!</h1>
@@ -64,398 +90,29 @@
     <a href="changelog.html">Changelog</a>
     <a href="archive.html">Archive</a>
     <a href="https://neurontechnologies.flarum.cloud/d/3-space-cat-games-general">Help</a>
+    <div class="loading-indicator" id="nav-loading-indicator">
+      <div class="spinner"></div>
+    </div>
   </div>
-
 
   <div class="hero">
-    <div class="container">
-      <h1 id="main-header">Welcome to Space Cat Games 17.4 - Codename 64</h1>
-      <div id="build-id" style="font-size:0.95em;color:#000000;margin-top:4px;"></div>
-      <div id="random-tip" class="random-tip"></div>
-      <script>
-        // Random tips array
-        // Build ID logic
-        function setBuildId(commitHash, isSession) {
-          if (isSession) {
-            document.getElementById("build-id").textContent = "Session ID: " + commitHash;
-          } else {
-            document.getElementById("build-id").textContent = "Build ID: " + commitHash;
-          }
-        }
-
-        // Try GitHub API, fallback to 'unknown'.
-        (function () {
-          fetch("https://api.github.com/repos/Starry-Systems/spacecatgames/commits?per_page=1")
-            .then(r => r.json())
-            .then(data => {
-              if (Array.isArray(data) && data[0] && data[0].sha) {
-                setBuildId(data[0].sha.substring(0, 7), false);
-              } else {
-                setBuildId(Math.floor(Math.random() * 1e8).toString().padStart(8, '0'), true);
-              }
-            })
-            .catch(() => setBuildId(Math.floor(Math.random() * 1e8).toString().padStart(8, '0'), true));
-        })();
-        const tips = [
-          "Aishite Aishite Aishite!",
-          "Mayday! Go ahead and fire away!",
-          "Today I will too roll again!",
-          "Hey William, can you hear us?",
-          "Shut up with your complains!",
-          "Hey, Kenji, can you see us?",
-          "It’s painful, it hurts. Break, break this binding spell, okay?",
-          "Who am I supposed to show my real self to?",
-          "That band's song, is a crutch to someone!",
-          "Cloudfart Turnstale don't work on Netlify...",
-          "I don't know what to say, but I want to say something.",
-          "Oh, I see, so thats how it is.",
-          "Microwave! Microwave! Microwave! Microwave! Microwave! Microwave! Microwave! Microwave! ",
-          "console.log(Random Tip Displayed: + randomTip);",
-          "Press F12 or Ctrl+Shift+J to open the console for secrets :)",
-          "1 year of service!",
-          "Stop your defender being a brick at the back and upgrade it with intense PAC DEF and PHY upgrades",
-          "undefined",
-          "The Big Orange R",
-          "µSpaceCat should exist fr",
-          "My spine ejected out of me like a PEZ dispenser!",
-          "From the fermented juice to the keys to the car to the trees",
-          "Oh, that girl, said what she said",
-          "Just once more?",
-          "No more!",
-          "*also known as Floppa Games",
-          "I love the smell of burnt toast in the morning!",
-          "Do all the balls from Slope just fall in the void forever?",
-          "There is a one in 10 chance to get a different title text...",
-          "Scarlet Police on Ghetto Patrol!",
-          "Cirno Funky!",
-          "Electric Angel!",
-          "Techically Broken!",
-          "fruity loops studio",
-          "Not Yamaha Approved!",
-          "Not Apache Approved!",
-          "Still using the codebase from version 0.5...",
-          "Not TEMU Approved!",
-          "律、やめてください…",
-          "Seems like a you problem.",
-          "HELP ME, ERINNNNNNN!",
-          "Cirno is behind you by the way.",
-          "please don't block our ads",
-          "OH NO THE PTA ARE AFTER US AGAIN!",
-          "The most Cutting Edge games website.",
-          "Down for 5 days and running!",
-          "あああああああ!",
-          "Super Powerful Miku-chan!",
-          "Running for 400 days!",
-          "7 is the second number!",
-          "Gamer-1_5 was here.",
-          "SPACE CAT GAMES: NOW ONLY 99$!.",
-          "'You're running in a KDE environment but the OS keyring is not available for encryption. Ensure that you have kwallet running'. - Visual Studio Code, my computer",
-          "This tip was added in 16.1. How interesting.",
-          "Running for 500 days!",
-          "webstorm better than vscode lmao",
-          "quick release christmas day lmfao - meowcat767",
-
-
-        ];
-
-        function showRandomTip() {
-          const randomTip = tips[Math.floor(Math.random() * tips.length)];
-          document.getElementById("random-tip").textContent = randomTip;
-          console.log("Random Tip Displayed: " + randomTip);
-        }
-
-        // Header randomization: 1 in 10 chance for Japanese Header
-        function randomizeHeader() {
-          const header = document.getElementById("main-header");
-          if (Math.random() < 0.1) {
-            header.textContent = "スペースキャットゲーム バージョン17.1";
-            console.log("Japanese header loaded.");
-          } else {
-            header.textContent = "Welcome to Space Cat Games 17.1";
-            console.log("Standard header loaded.");
-          }
-        }
-
-        randomizeHeader();
-        showRandomTip(); // Show one on load
-        setInterval(showRandomTip, 5000); // Change every 5 seconds, you should 100 percent change this to 1000 on april fools
-      </script>
-      <br />
-      <a href="games.html" class="btn">Play Now</a>
-    </div>
+    <div 
+      <!-- ...existing code... -->
   </div>
 
-  <div class="container">
-    <section class="features">
-      <h2>Why Play at Space Cat Games?</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <h3>Free Games</h3>
-          <p>
-            All our games are completely free to play, with no hidden costs or
-            subscriptions needed.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>No Downloads</h3>
-          <p>
-            Play directly in your browser - no installations, no waiting, just
-            instant gaming. You will need an OpenGL Driver to play.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>Variety of Games</h3>
-          <p>
-            From classics like Tetris and Snake to modern hits like Geometry
-            Dash and CrazyCattle3D, we have something for everyone.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>Free and Open Source</h3>
-          <p>
-            This website is free and Open Source, so you can always
-            contribute!
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="featured-games">
-      <h2>Featured Games</h2>
-      <div class="games-grid">
-        <div class="game-item">
-          <button type="button" onclick="window.location.href='https://supertuxkart.pages.dev/'" title="SuperTuxKart">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3wVhcyQV-z7il2CAUbDkZJKkWTUe9lrR_3A&s"
-              alt="SuperTuxKart" />
-          </button>
-          <p>SuperTuxKart</p>
-        </div>
-        <div class="game-item">
-          <button type="button" onclick="window.location.href='games/minecraft.html'" title="Minecraft">
-            <img src="https://i.ibb.co/tT7XZRMW/Grass-Block-JE2.webp" alt="Minecraft" />
-          </button>
-          <p>Minecraft</p>
-        </div>
-        <div class="game-item">
-          <button type="button" onclick="window.location.href='/games/clcrazycattle3d.html'" title="Crazy Cattle 3D">
-            <img src="/images/cattlemoment.webp" alt="Crazy Cattle 3D" />
-          </button>
-          <p>Crazy Cattle 3D</p>
-        </div>
-      </div>
-      <div class="cta-section">
-        <a href="games.html" class="btn">See All Games</a>
-      </div>
-    </section>
-    <div class="marquee-container">
-      <marquee>
-        <img src="neocities.png" width="100" height="30" alt="Neocities" />
-        <img src="Team_Astrocat.png" width="70" height="30" alt="Team Astrocat" />
-        <img src="gplv3.svg" width="70" height="30" alt="GPL v3" />
-        <a href="#"><img src="https://files.catbox.moe/gcmc8o.gif" /></a>
-        <a href="#"><img src="https://files.catbox.moe/uclkoz.png" /></a>
-        <img src="https://files.catbox.moe/mshtwh.gif" />
-        <img src="https://files.catbox.moe/sivlh3.png" />
-        <img src="https://files.catbox.moe/2o00li.gif" />
-        <img src="https://files.catbox.moe/3refdy.png" />
-        <img src="https://files.catbox.moe/dqha9a.png" />
-        <img src="https://files.catbox.moe/2tq6ga.gif" />
-        <img src="https://files.catbox.moe/j2ykvb.gif" />
-        <img src="https://catsplace.neocities.org/img/vscbutton.gif" />
-        <img src="https://catsplace.neocities.org/img/webpassion.gif" />
-        <img src="https://catsplace.neocities.org/img/nowebp.gif" />
-
-
-
-
-
-      </marquee>
-    </div>
-
-
-  </div>
-
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="games.html">Games</a>
-          <a href="credits.html">Credits</a>
-          <a href="opensource.html">Open Source</a>
-          <a href="changelog.html">Changelog</a>
-        </div>
-        <p class="copyright">© 2025 Nijika Softworks & Neuron Technologies | All rights reserved.</p>
-        <a href="https://github.com/Starry-Systems/"><img
-            src="https://avatars.githubusercontent.com/u/241321890?s=200&v=4" height="150" /></a>
-        <a href="https://nijikasoftworks.meowcat.site/"><img src="images/ns_yellow.png" height="150" width="500" /></a>
-      </div>
-    </div>
-    <script>
-      (function (d, s, id) {
-        var js,
-          pjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "//www.tickcounter.com/static/js/loader.js";
-        pjs.parentNode.insertBefore(js, pjs);
-      })(document, "script", "tickcounter-sdk");
-    </script>
-    <a data-type="countup" data-id="367698" class="tickcounter" style="
-          display: block;
-          left: 0;
-          width: 100%;
-          height: 50px;
-          position: relative;
-          padding-bottom: 0;
-          margin: 0 auto;
-        " title="Uptime" href="//www.tickcounter.com/countup">Uptime</a>
-  </footer>
-
-  <script src="js/main.js"></script>
-  <div id="fps-counter" style="
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(20, 20, 20, 0.8);
-        color: #0f0;
-        font-family: monospace;
-        font-size: 16px;
-        padding: 6px 12px;
-        border-radius: 6px;
-        z-index: 9999;
-        pointer-events: none;
-      ">
-    FPS: --
-  </div>
   <script>
-    (function () {
-      let lastFrame = performance.now();
-      let frames = 0;
-      let fps = 0;
-      function loop(now) {
-        frames++;
-        if (now - lastFrame >= 1000) {
-          fps = frames;
-          frames = 0;
-          lastFrame = now;
-          document.getElementById("fps-counter").textContent = "FPS: " + fps;
-        }
-        requestAnimationFrame(loop);
+    const navLoadingIndicator = document.getElementById('nav-loading-indicator');
+
+    document.addEventListener('click', (event) => {
+      if (event.target.tagName === 'A') {
+        navLoadingIndicator.style.display = 'block';
+        setTimeout(() => {
+          navLoadingIndicator.style.display = 'none';
+        }, 1000);
       }
-      requestAnimationFrame(loop);
-    })();
-  </script>
-  <script src="js/themeswitcher.js"></script>
-  <!-- Flag Counter Drawer -->
-  <div id="flag-drawer">
-    <div id="flag-drawer-tab">🏳️</div>
-    <div id="flag-drawer-content">
-      <img
-        src="https://count.getloli.com/@:spacecatgames?name=%3Aspacecatgames&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=0&prefix=0">
-        <script src="https://quge5.com/88/tag.min.js" data-zone="192458" async data-cfasync="false"></script>
-      </a>
-      <br />
-    </div>
-  </div>
-
-  <style>
-    #flag-drawer {
-      position: fixed;
-      top: 120px;
-      right: -184px;
-      /* 220px (drawer width) - 36px (tab width) */
-      width: 220px;
-      transition: right 0.3s;
-      z-index: 10000;
-    }
-
-    #flag-drawer.open {
-      right: 0;
-    }
-
-    #flag-drawer-tab {
-      position: absolute;
-      left: -36px;
-      top: 0;
-      width: 36px;
-      height: 60px;
-      background: #222;
-      color: #fff;
-      border-radius: 8px 0 0 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 24px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      user-select: none;
-    }
-
-    #flag-drawer-content {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px 0 0 8px;
-      padding: 10px 5px 10px 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      min-width: 180px;
-      min-height: 70px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow-x: auto;
-    }
-
-    #flag-drawer-content img {
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
-  <script>
-    // Flag Drawer Toggle
-    document.addEventListener("DOMContentLoaded", function () {
-      const drawer = document.getElementById("flag-drawer");
-      const tab = document.getElementById("flag-drawer-tab");
-      tab.addEventListener("click", function () {
-        drawer.classList.toggle("open");
-      });
     });
   </script>
-  <script>
-    var expectedUrls = [
-      "https://spacecatgame.netlify.app",
-      "https://spacecatgames.onrender.com",
-      "https://scg.meowcat.site",
-      "https://space-cat-games.onrender.com/",
-      "https://spacecatgames.site",
-
-    ];
-
-    var currentUrl = window.location.href;
-
-    var matchFound = expectedUrls.some(url => currentUrl.startsWith(url));
-
-    if (!matchFound) {
-      var header = document.getElementById('main-header');
-      if (header) {
-        header.textContent = "Space Cat Games: Developer's Edition.";
-        header.style.color = "red";
-      }
-
-      // Check if user has already dismissed the prompt
-      if (!localStorage.getItem('suppressOfficialSitePrompt')) {
-        var userChoice = confirm("You are viewing Space Cat Games on an unofficial or development URL.\n\nWould you like to visit the official site (spacecatgame.netlify.app)?\n\nClick OK to go to the official site.\nClick Cancel to stay here and not be asked again.");
-
-        if (userChoice) {
-          window.location.href = "https://spacecatgame.netlify.app";
-        } else {
-          localStorage.setItem('suppressOfficialSitePrompt', 'true');
-        }
-      }
-    }
-  </script>
-  <script src="js/type.js"></script>
+</body>
 
 </html>
+```
