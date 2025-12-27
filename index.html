@@ -34,37 +34,67 @@
   <meta property="og:url" content="https://spacecatgames.netlify.app" />
   <meta property="og:type" content="website" />
 
-  <script>(function(s){s.dataset.zone='10315218',s.src='https://cdn.vidibot.net/video.js/7.20.1/video.min.js'%(typeof s.addEventListener == "undefined" ? "on" : "")}(document.head.appendChild(document.createElement('script'))))</script>
-  
-  <script>(function(s){s.dataset.zone='10315218',s.src='https://cdn.vidibot.net/video.js/7.20.1/video-js.min.js'%(typeof s.addEventListener == "undefined" ? "on" : "")}(document.head.appendChild(document.createElement('script'))))</script>
-  
-  <script>(function(s){s.dataset.zone='10315218',s.src='https://cdn.vidibot.net/video.js/7.20.1/video.min.js'%(typeof s.addEventListener == "undefined" ? "on" : "")}(document.head.appendChild(document.createElement('script'))))</script>
+  <script>(function(s){s.dataset.zone='10315218',s.src
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const lightCss = "light-theme";
+      const darkCss = "dark-theme";
+
+      if (body.classList.contains(lightCss)) {
+        body.classList.remove(lightCss);
+        body.classList.add(darkCss);
+      } else {
+        body.classList.remove(darkCss);
+        body.classList.add(lightCss);
+      }
+    }
+  </script>
 </head>
 
-<body class="dark-theme" id="loading-page">
+<body class="dark-theme" id="loading-page" onload="onBodyLoad();">
   <div class="loading">
     <div>Loading...</div>
   </div>
+
   <div class="topnav">
-    <!-- existing topnav content -->
+    <a href="index.html">Home</a>
+    <a href="games.html">Games</a>
+    <a href="https://nijikasoftworks.meowcat.site/">News</a>
+    <a href="opensource.html">Source Code</a>
+    <a href="credits.html">Credits</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="archive.html">Archive</a>
+    <a href="https://neurontechnologies.flarum.cloud/d/3-space-cat-games-general">Help</a>
   </div>
-  <div class="hero">
-    <!-- existing hero content -->
-  </div>
+
+  <button id="theme-toggle" onclick="toggleTheme()">Switch Theme</button>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const loadingElement = document.getElementById("loading-page");
-      loadingElement.classList.add("hide-loading");
-    });
-
-    window.addEventListener("load", function() {
-      const loadingElement = document.getElementById("loading-page");
-      loadingElement.classList.add("hide-loading");
-    });
+    function onBodyLoad() {
+      setTimeout(function() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementsByClassName('loading')[0].style.display = 'none';
+      }, 2000);
+    }
   </script>
 
-  <!-- existing page content -->
-</body>
-</html>
+  <div class="hero">
+    <div class="container">
+      <h1 id="main-header">Welcome to Space Cat Games 17.4 - Codename 64</h1>
+      <div id="build-id" style="font-size:0.95em;color:#000000;margin-top:4px;"></div>
+      <div id="random-tip" class="random-tip"></div>
+      <script>
+        // Random tips array
+        // Build ID logic
+        function setBuildId(commitHash, isSession) {
+          if (isSession) {
+            document.getElementById("build-id").textContent = "Session ID: " + commitHash;
+          } else {
+            document.getElementById("build-id").textContent = "Build ID: " + commitHash;
+          }
+        }
+
+        // Try GitHub API, fallback to 'unknown'.
+        // Rest of your code...
 ```

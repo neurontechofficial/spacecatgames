@@ -81,7 +81,18 @@ def sync_to_github(task):
             log_action("ℹ️ No functional changes were made by the AI.")
             return
 
-        commit_msg = f"auto: {task[:50]}"
+        # --- NEW CLEANING LOGIC ---
+        # Strip AI "chatter" like "One potential improvement is..."
+        clean_msg = task.replace("One potential web UI improvement for these HTML files is to ", "")
+        clean_msg = clean_msg.replace("One potential web UI improvement is to ", "")
+        clean_msg = clean_msg.replace("I suggest adding ", "Add ")
+
+        # Ensure it's a single line and limited to 72 characters
+        clean_msg = clean_msg.split('\n')[0][:72].strip()
+
+        commit_msg = f"auto: {clean_msg}"
+        # --------------------------
+
         repo.index.commit(commit_msg)
 
         origin = repo.remote(name='origin')

@@ -1,46 +1,16 @@
 ```css
-.loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 100;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #000;
-  opacity: 0;
-  transition: opacity 2s;
+body.light-theme {
+  background-color: #f5f5f5;
+  color: #000;
 }
 
-.loading.show {
-  opacity: 1;
+body.light-theme .topnav a {
+  color: #000;
 }
 
-.loading.hide {
-  opacity: 0;
-  animation: fade-out 2s;
+body.light-theme .hero {
+  background-color: #fff;
 }
 
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.loading.show {
-  animation: fade-in 2s;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+/* rest of your code... */
 ```
