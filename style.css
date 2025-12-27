@@ -1,4 +1,4 @@
-```css
+```
 #loading-page .loading {
   position: fixed;
   top: 50%;
@@ -9,7 +9,7 @@
   height: 100px;
   border-radius: 50%;
   background-color: #000;
-  animation: loading-animation 2s infinite;
+  animation: loading-animation 2s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 #loading-page.hide-loading {
